@@ -35,6 +35,21 @@ def seleciona_usuario(id):
     return gera_response(200, "usuario", usuario_json)
 
 
+@app.route("/usuario", methods=["POST"])
+def cria_usuario():
+    body = request.get_json()
+
+    try:
+        usuario = Usuario(nome=body["nome"], email=body["email"])
+        db.session.add(usuario)
+        db.session.commit()
+        return gera_response(201, "usuario", usuario.to_json(), "Criado com sucesso")
+
+    except Exception as e:
+        print(e)
+        return gera_response(400, "usuario", {}, "Erro ao cadastrar")
+
+
 def encontra_usuario(id):
     return Usuario.query.filter_by(id=id).first()
 
@@ -46,5 +61,6 @@ def gera_response(status, nome_do_conteudo, conteudo, mensagem=False):
         body["mensagem"] = mensagem
 
     return Response(json.dumps(body), status=status, mimetype="application/json")
+
 
 app.run()
