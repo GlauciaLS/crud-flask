@@ -19,4 +19,20 @@ class Usuario(db.Model):
         return {"id": self.id, "nome": self.nome, "email": self.email}
 
 
+@app.route("/usuarios", methods=["GET"])
+def seleciona_usuarios():
+    usuarios_objetos = Usuario.query.all()
+    usuarios_json = [usuario.to_json() for usuario in usuarios_objetos]
+
+    return gera_response(200, "usuarios", usuarios_json, "ok")
+
+
+def gera_response(status, nome_do_conteudo, conteudo, mensagem=False):
+    body = {nome_do_conteudo: conteudo}
+
+    if mensagem:
+        body["mensagem"] = mensagem
+
+    return Response(json.dumps(body), status=status, mimetype="application/json")
+
 app.run()
