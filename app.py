@@ -70,6 +70,20 @@ def atualiza_usuario(id):
         return gera_response(400, "usuario", {}, "Erro ao atualizar")
 
 
+@app.route("/usuario/<id>", methods=["DELETE"])
+def deleta_usuario(id):
+    usuario_objeto = encontra_usuario(id)
+
+    try:
+        db.session.delete(usuario_objeto)
+        db.session.commit()
+        return gera_response(200, "usuario", usuario_objeto.to_json(), "Deletado com sucesso")
+
+    except Exception as e:
+        print(e)
+        return gera_response(400, "usuario", {}, "Erro ao deletar")
+
+
 def encontra_usuario(id):
     return Usuario.query.filter_by(id=id).first()
 
